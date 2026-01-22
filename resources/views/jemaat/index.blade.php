@@ -20,6 +20,29 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* --- TAMBAHAN ANIMASI SAJA --- */
+        .reveal-node {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        .reveal-node.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .row-hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s ease-out;
+        }
+
+        .row-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
@@ -82,13 +105,13 @@
     <!-- MAIN CONTENT -->
     <main class="flex-grow pt-32 pb-20 px-6">
         <div class="max-w-6xl mx-auto">
-            <div class="mb-10 text-center">
+            <div class="mb-10 text-center reveal-node" id="headerAnim">
                 <h2 class="text-blue-900 font-black text-4xl md:text-5xl uppercase tracking-tighter mb-4">Daftar Jemaat</h2>
                 <div class="w-24 h-2 bg-yellow-500 mx-auto rounded-full"></div>
             </div>
 
             <!-- Search Bar -->
-            <div class="mb-8 max-w-md mx-auto">
+            <div class="mb-8 max-w-md mx-auto reveal-node" id="searchAnim">
                 <div class="relative">
                     <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Cari nama atau rayon..." class="w-full pl-12 pr-6 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
                     <div class="absolute left-4 top-4 text-slate-400">
@@ -99,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200">
+            <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200 reveal-node" id="tableAnim">
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left border-collapse" id="jemaatTable">
                         <thead class="bg-blue-900 text-white uppercase text-[11px] tracking-[0.2em]">
@@ -114,7 +137,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($jemaats as $index => $item)
-                            <tr class="hover:bg-blue-50/50 transition-all group">
+                            <tr class="hover:bg-blue-50/50 transition-all group jemaat-row row-hidden">
                                 <td class="px-8 py-6 text-sm font-bold text-slate-300 text-center">{{ $index + 1 }}</td>
                                 <td class="px-6 py-6">
                                     <div class="flex items-center gap-4">
@@ -233,6 +256,23 @@
                 }
             }
         }
+
+        // --- SCRIPT PEMICU ANIMASI ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Animasi Header & Search
+            setTimeout(() => document.getElementById('headerAnim').classList.add('active'), 100);
+            setTimeout(() => document.getElementById('searchAnim').classList.add('active'), 300);
+            setTimeout(() => document.getElementById('tableAnim').classList.add('active'), 500);
+
+            // Animasi Baris Tabel Secara Berurutan
+            const rows = document.querySelectorAll('.jemaat-row');
+            rows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.classList.remove('row-hidden');
+                    row.classList.add('row-visible');
+                }, 800 + (index * 100)); // Delay bertahap tiap baris
+            });
+        });
     </script>
 </body>
 </html>
